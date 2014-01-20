@@ -59,6 +59,18 @@ static User_t *create_user(char* username, int uid) {
     return user;
 }
 
+static Attack_t *create_attack(int from, int to, int ships, int time) {
+	Attack_t *att = malloc(sizeof(Attack_t));
+
+	att->from = from;
+	att->to = to;
+	att->ships = ships;
+	att->time_left = time;
+
+	att->next = NULL;
+
+	return att;
+}
 
 int start_game(int socket, char* username) {
     char buf[255];
@@ -91,7 +103,7 @@ int start_game(int socket, char* username) {
     // Sleep till start of game
     sleep(start_time);
     printf("[NOTICE]: GAME STARTED!\n");
-    return 0;
+    return 1;
 }
 
 void *planet_update_timer() {

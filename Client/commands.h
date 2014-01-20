@@ -37,14 +37,10 @@ typedef struct Attack {
     int ships;
     int time_left;
 
-    struct Planet *planet_from;
-    struct Planet *planet_to;
-
-    struct User *attacker_user;
-    struct User *defender_user;
+    int to;
+    int from;
 
     struct Attack *next;
-    struct Attack *prev;
 } Attack_t;
 
 extern Message_t *OUT_QUEUE;
