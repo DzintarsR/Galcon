@@ -16,6 +16,45 @@ typedef struct Message {
     struct Message *next;
 } Message_t;
 
+struct User {
+    int id;
+    char username[50];
+    char ip[21];
+
+    struct User *next;
+};
+
+// TODO: these should be included from Karlis Game logic implementaton in Server side
+
+typedef struct User User_t;
+
+struct Planet {
+    int id;
+    int x;
+    int y;
+    int capacity;
+    int ships;
+
+    struct User *user;
+    struct Planet *next;
+};
+typedef struct Planet Planet_t;
+
+struct Attack {
+    int ships;
+    int time_left;
+
+    struct Planet *planet_from;
+    struct Planet *planet_to;
+
+    struct User *attacker_user;
+    struct User *defender_user;
+
+    struct Attack *next;
+    struct Attack *prev;
+};
+typedef struct Attack Attack_t;
+
 extern Message_t *OUT_QUEUE;
 
 int start_game(int socket, char *username);

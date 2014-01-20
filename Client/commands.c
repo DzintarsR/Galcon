@@ -9,6 +9,20 @@
 #include <unistd.h>
 
 pthread_mutex_t QUEUE_MUTEX = PTHREAD_MUTEX_INITIALIZER;
+Message_t *OUT_QUEUE = NULL;
+
+
+/*****************************
+ * USER DB
+ */
+
+User_t USER_LIST = NULL;
+User_t CLIENT_USER = NULL;
+
+
+/*
+ *
+ ***************************/
 
 int create_threads() {
     pthread_t planet_updater_thread;
@@ -118,22 +132,27 @@ void get_username(char *username) {
     }
 }
 
+static User_t create_user(char* username, char* uid) {
+    // TODO
+}
+
 void parse_resp(char *message) {
     char buf[1000];
     int x, y;
 
-    if (sprintf(buf, "J %d %d", &x, &y)) {
+    if (sprintf(buf, "J %d %d", x, y)) {
         // TODO: create user with uid y
+
         // TODO: set timeout till game starts
-    } else if (strcmp(message[0], "A")) {
+    } else if (strcmp(&message[0], "A")) {
         // TODO: populate list with attackers
         // TODO: implement thread that apply attack after provided time??? or this is done by updater thread???
-    } else if (strcmp(message[0], "U")) {
+    } else if (strcmp(&message[0], "U")) {
         // TODO: at the start of the game populate users. I think that one ask at the start would be sufficient cause data shouldn't change
-    } else if (strcmp(message[0], "M")) {
+    } else if (strcmp(&message[0], "M")) {
         // TODO: Populate planet list at the start of the game
         // TODO: Update planet information about planets
-    } else if (sprintf(buf, "S %d %d", &x, &y)) {
+    } else if (sprintf(buf, "S %d %d", x, y)) {
         // TODO: Add attack in list
         // TODO: Updater should count down time for attack engagement
     } else {

@@ -86,11 +86,15 @@ void *connection_handler(void *socket_desc) {
 		    sprintf(err, "ERR %s", client_message);
 
 			write(sock, err, strlen(err));
+
+			client_message[0] = '\0';
 			continue;
 		}
 
 		write(sock, server_message, strlen(server_message));
 		printf("-->: %s\n", server_message);
+
+		client_message[0] = '\0';
 	}
 
 	if (read_size == 0) {

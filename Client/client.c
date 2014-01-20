@@ -9,9 +9,6 @@
 
 #include "commands.h"
 
-#define UPDATE_TIMER 3
-
-Message_t *OUT_QUEUE = NULL;
 
 int main(int argc, char *argv[]) {
 	int sock;
