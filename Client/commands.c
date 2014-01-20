@@ -13,12 +13,13 @@ Message_t *OUT_QUEUE = NULL;
 
 
 /*****************************
- * USER DB
+ * Game Data
  */
 
-User_t USER_LIST = NULL;
-User_t CLIENT_USER = NULL;
+User_t *USER_LIST = NULL;
+User_t *CLIENT_USER = NULL;
 
+Attack_t *ATTACS = NULL;
 
 /*
  *
@@ -30,40 +31,67 @@ int create_threads() {
 
     if (pthread_create(&planet_updater_thread, NULL, &planet_update_timer,
     NULL)) {
-        perror("could not create thread");
+        printf("[ERROR]: Could not create thread!\n");
         return 1;
     }
 
     if (pthread_create(&user_input_thread, NULL, &receive_user_input,
     NULL)) {
-        perror("could not create thread");
+        printf("[ERROR]: Could not create thread!\n");
         return 1;
     }
 
     return 0;
 }
 
+
+static User_t *create_user(char* username, int uid) {
+	if (!username && !uid) {
+		return NULL;
+	}
+
+    User_t *user = malloc(sizeof(User_t));
+
+    strcpy(user->username, username);
+    user->id = uid;
+    user->next = NULL;
+
+    return user;
+}
+
+
 int start_game(int socket, char* username) {
     char buf[255];
     char recv_buf[255];
-    char start_time[10];
+    int start_time, uid;
 
     sprintf(buf, "J %s", username);
     if (send(socket, buf, strlen(buf), 0) < 0) {
-        perror("send failed");
+        printf("[ERROR]: Send failed.\n");
         return -1;
     }
 
-    if (recv(socket, recv_buf, 2000, 0) < 0) {
-        perror("recv failed");
+    if (recv(socket, recv_buf, 255, 0) < 0) {
+        printf("[ERROR]: Recv failed.\n");
         return -1;
     }
 
-    if (sscanf(recv_buf, "J %s", start_time) == 0) {
-        perror("Could not join. Join operation failed.");
+    if (sscanf(recv_buf, "J %d %d", &uid, &start_time) == 0) {
+        printf("[ERROR]: Could not join. Join operation failed.\n");
         return -1;
     }
-    return atol(start_time);
+
+    CLIENT_USER = create_user(username, uid);
+
+    if (CLIENT_USER == NULL) {
+    	printf("[ERROR]: Could not join. Server returned uid == 0.\n");
+    	return -1;
+    }
+
+    // Sleep till start of game
+    sleep(start_time);
+    printf("[NOTICE]: GAME STARTED!\n");
+    return 0;
 }
 
 void *planet_update_timer() {
@@ -81,7 +109,7 @@ void *receive_user_input() {
         scanf("%s", buf);
 
         if (strlen(buf) == 0) {
-            printf("ERROR: please provide command");
+            printf("[ERROR]: please provide command");
             break;
         }
         create_message(buf);
@@ -132,19 +160,12 @@ void get_username(char *username) {
     }
 }
 
-static User_t create_user(char* username, char* uid) {
-    // TODO
-}
 
 void parse_resp(char *message) {
     char buf[1000];
-    int x, y;
+    int x = 0, y = 0;
 
-    if (sprintf(buf, "J %d %d", x, y)) {
-        // TODO: create user with uid y
-
-        // TODO: set timeout till game starts
-    } else if (strcmp(&message[0], "A")) {
+    if (strcmp(&message[0], "A")) {
         // TODO: populate list with attackers
         // TODO: implement thread that apply attack after provided time??? or this is done by updater thread???
     } else if (strcmp(&message[0], "U")) {

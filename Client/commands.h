@@ -16,19 +16,13 @@ typedef struct Message {
     struct Message *next;
 } Message_t;
 
-struct User {
+typedef struct User {
     int id;
     char username[50];
-    char ip[21];
-
     struct User *next;
-};
+} User_t;
 
-// TODO: these should be included from Karlis Game logic implementaton in Server side
-
-typedef struct User User_t;
-
-struct Planet {
+typedef struct Planet {
     int id;
     int x;
     int y;
@@ -37,10 +31,9 @@ struct Planet {
 
     struct User *user;
     struct Planet *next;
-};
-typedef struct Planet Planet_t;
+} Planet_t;
 
-struct Attack {
+typedef struct Attack {
     int ships;
     int time_left;
 
@@ -52,8 +45,7 @@ struct Attack {
 
     struct Attack *next;
     struct Attack *prev;
-};
-typedef struct Attack Attack_t;
+} Attack_t;
 
 extern Message_t *OUT_QUEUE;
 

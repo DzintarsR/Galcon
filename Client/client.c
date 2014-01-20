@@ -1,6 +1,6 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <pthread.h>
+//#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 	//Create socket
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (sock == -1) {
-		perror("Could not create socket");
+		printf("[ERROR]: Could not create socket.\n");
 	}
 
 	server.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -30,17 +30,17 @@ int main(int argc, char *argv[]) {
 	server.sin_family = AF_INET;
 
 	if (connect(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
-		perror("connect failed. Error");
+		printf("[ERROR]: Connect failed.\n");
 		return 1;
 	}
 
 	if (!start_game(sock, username)) {
-		perror("Could not join the server!\n");
+		printf("[ERROR]: Could not join the server!\n");
 		return 1;
 	}
 
 	if (create_threads()) {
-	    printf("Could not create threads!\n");
+	    printf("[ERROR]: Could not create threads!\n");
 	    return 1;
 	}
 
@@ -53,14 +53,14 @@ int main(int argc, char *argv[]) {
 		    // fetch message from queue and send
 			input_buf = get_next_message();
 			if (send(sock, input_buf, strlen(input_buf), 0) < 0) {
-				perror("send failed");
+				printf("[ERROR]: Send failed!\n");
 				return 1;
 			}
 			free(input_buf);
 
 			// receive response
 			if (recv(sock, recv_buf, 2000, 0) < 0) {
-				perror("recv failed");
+				printf("[ERROR]: recv failed!\n");
 				break;
 			}
 			printf("\n%s\n", recv_buf);
