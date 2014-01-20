@@ -81,8 +81,12 @@ void *connection_handler(void *socket_desc) {
 		server_message = parse_request(sock, client_message);
 
 		if (server_message == NULL) {
-			printf("Client message could not be parsed! msg=%s\n", client_message);
-			break;
+		    char err[1000];
+
+		    sprintf(err, "ERR %s", client_message);
+
+			write(sock, err, strlen(err));
+			continue;
 		}
 
 		write(sock, server_message, strlen(server_message));
