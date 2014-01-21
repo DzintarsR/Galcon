@@ -43,6 +43,16 @@ typedef struct Attack {
     struct Attack *next;
 } Attack_t;
 
+typedef struct Chat {
+    int user_to_id;
+    int user_from_id;
+
+    char chat_time[9];
+	char chat_message[81];
+
+    struct Chat *next;
+} Chat_t;
+
 extern Message_t *OUT_QUEUE;
 
 int start_game(int socket, char *username);

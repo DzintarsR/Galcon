@@ -109,6 +109,7 @@ int start_game(int socket, char* username) {
 void *planet_update_timer() {
     while (1) {
         create_message("M");
+		create_message("R");
         sleep(UPDATE_TIMER);
     }
     return 0;
@@ -176,6 +177,8 @@ void get_username(char *username) {
 void parse_resp(char *message) {
     char buf[1000];
     int x = 0, y = 0;
+	int user_to_id =0;
+	char chat_message[81];
 
     if (strcmp(&message[0], "A")) {
         // TODO: populate list with attackers
@@ -188,8 +191,61 @@ void parse_resp(char *message) {
     } else if (sprintf(buf, "S %d %d", x, y)) {
         // TODO: Add attack in list
         // TODO: Updater should count down time for attack engagement
+	} else if (strcmp(&message[0], "C")) {
+        // TODO: Nothing? Chat message sent
+	} else if (strcmp(&message[0], "R")) {
+		if (sscanf(message, "R %d", chat_count)){
+			for (int i=1; i <= chat_count; i++){
+				if(sscanf(message, "%s", chat_string)){
+					parse_chat_string(chat_string);
+				}
+			}
+		};
+		//sprintf(buf, "R %d %d %s %s %d", chat_count, user_to_id, chat_time, chat_message, user_from_id)
+		
+		// TODO: Delimit message into chunks - first in chat_count times, after that delimit by '_'
+		// TODO: Parse spaces in chat messages
+        // TODO: Add chat message in list	
     } else {
         // TODO: do nothing?
     }
 }
 
+void parse_chat_string(char *chat_str){
+	//do some magic
+	if(sscanf(message, "%d[^_]_%s[^_]_%s[^_]_%d", 
+		user_to_id, 
+		chat_time, 
+		chat_message, 
+		user_from_id)){
+		
+			//after some magic parse chat_message
+			convert_space(chat_message, 81);
+			
+			Chat_t *chat;
+			chat = malloc(sizeof(struct Chat));
+			// set chat data
+			chat->user_to_id = user_to_id;
+			chat->user_from_id = user_from_id;
+			chat->chat_time = chat_time;
+			chat->chat_message = chat_message;
+			chat->next = 
+		}
+}
+
+void convert_space( char *str, int size )
+{
+    int i;
+    /* convert space */
+    for (  i = 0; i < size; ++i ){
+        if ( str[i] == '|')
+            str[i] = ' ';
+		if ( str[i] == '~' )
+            str[i] = '_';
+    }
+}
+
+char *create_chat(int user_to_id, char *message, int user_ident) {
+	
+	chat_message = 
+	convert_space(chat_message, 81);
